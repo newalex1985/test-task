@@ -69,12 +69,9 @@ class App extends Component {
 
     };
 
-
     render() {
         return (
-
             <div
-                id="myGrid"
                 style={{
                     width: '1200px',
                     height: '1200px'
@@ -89,7 +86,6 @@ class App extends Component {
                     onGridReady={this.onGridReady}
                 />
             </div>
-
         );
     }
 }
