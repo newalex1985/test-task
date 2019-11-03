@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 
-// import './App.css';
 import { AgGridReact } from 'ag-grid-react';
 import "ag-grid-enterprise";
 
@@ -13,159 +12,86 @@ class App extends Component {
         this.state = {
             columnDefs: [
                 {
-                    headerName: "id",
-                    field: "id",
-                    // filter: "agSetColumnFilter",
-                    // filterParams: {
-                    // cellHeight: 20,
-                    // // values: irishAthletes(),
-                    // debounceMs: 1000
-                    // }
-                }, 
-                {
-                    headerName: "В продаже", field: "active"
-                }, 
-                {
-                    headerName: "Скидка", field: "use_discounts"
+                    headerName: 'id', field: 'id', filter: 'agNumberColumnFilter'
                 },
                 {
-                    headerName: "Наименование", field: "name"
+                    headerName: 'В продаже', field: 'active', filter: 'agSetColumnFilter'
                 },
                 {
-                    headerName: "Категория", field: "category"
+                    headerName: 'Скидка', field: 'use_discounts', filter: 'agSetColumnFilter'
                 },
                 {
-                    headerName: "Ед. измерения", field: "measure"
+                    headerName: 'Наименование', field: 'name', filter: 'agTextColumnFilter'
                 },
                 {
-                    headerName: "Цех", field: "work_space"
+                    headerName: 'Категория', field: 'category', filter: 'agSetColumnFilter'
+                },
+                {
+                    headerName: 'Ед. измерения', field: 'measure', filter: 'agTextColumnFilter'
+                },
+                {
+                    headerName: 'Цех', field: 'work_space', filter: 'agTextColumnFilter'
                 }
             ],
 
             defaultColDef: {
-                // width: 50,
-                // editable: true,
-                // filter: "agTextColumnFilter"
                 sortable: true,
-                filter: true
-              },
+                filterParams: {
+                    clearButton: true,
+                    applyButton: true,
+                    debounceMs: 200
+                }
+            },
 
-            // rowData: [
-            //     {
-            //     make: "Toyota", model: "Celica", price: 35000
-            //     }, 
-            //     {
-            //     make: "Ford", model: "Mondeo", price: 32000
-            //     },
-            //     {
-            //     make: "Porsche", model: "Boxter", price: 72000
-            //     }
-            // ]
             rowData: null
         }
     }
 
-    // componentDidMount() {
-    //     console.log('component did mount');
-
-    //     console.log('get products');
-        
-        // fetch('http://localhost:3000/products/')
-        // .then(response => response.json())
-        // .then(json => {
-        //     console.log(json);
-
-        // })
-        // .catch(error => console.log('error description: ', error));
-
-    //     console.log('get categories');
-        
-    //     fetch('http://localhost:3000/categories/')
-    //     .then(response => response.json())
-    //     .then(json => console.log(json))
-    //     .catch(error => console.log('error description: ', error));
-
-
-        // console.log('get workshops');
-        
-        // fetch('http://localhost:3000/workshops/')
-        // .then(response => response.json())
-        // .then(json => console.log(json))
-        // .catch(error => console.log('error description: ', error));
-
-    // }
-
-
-    onGridReady = params => {
+    onGridReady = async (params) => {
         this.gridApi = params.api;
         this.gridColumnApi = params.columnApi;
-    
-        // const httpRequest = new XMLHttpRequest();
+
+
         const updateData = data => {
-          this.setState({ rowData: data });
+            this.setState({ rowData: data });
         };
-    
-        // httpRequest.open(
-        //   "GET",
-        //   "https://raw.githubusercontent.com/ag-grid/ag-grid/master/packages/ag-grid-docs/src/olympicWinners.json"
-        // );
-        // httpRequest.send();
-        // httpRequest.onreadystatechange = () => {
-        //   if (httpRequest.readyState === 4 && httpRequest.status === 200) {
-        //     updateData(JSON.parse(httpRequest.responseText));
-        //   }
-        // };
 
-        // fetch('http://localhost:3000/products/')
-        // .then(response => response.json())
-        // .then(json => {
-        //     console.log(json);
-        //     updateData(json.data);
-        // })
-        // .catch(error => console.log('error description: ', error));
-
-
-        fetch('http://localhost:3000/all/')
-        .then(response => response.json())
-        .then(data => {
-            // console.log(data);
+        try {
+            const response = await fetch('http://localhost:3000/all/');
+            if (!response.ok) {
+                throw new Error('HTTP error, status = ' + response.status + ': ' + response.statusText);
+            }
+            const data = await response.json();
             updateData(data);
-        })
-        .catch(error => console.log('error description: ', error));
+        } catch (error) {
+            console.log('Error: ', error.message);
+        }
 
     };
 
+
     render() {
         return (
+
             <div
-                className="ag-theme-balham"
+                id="myGrid"
                 style={{
-                    height: '1500px',
-                    width: '1500px'
-                }}>
+                    width: '1200px',
+                    height: '1200px'
+                }}
+                className="ag-theme-balham"
+            >
                 <AgGridReact
                     columnDefs={this.state.columnDefs}
                     defaultColDef={this.state.defaultColDef}
                     rowData={this.state.rowData}
-                    onGridReady={this.onGridReady}>
-                </AgGridReact>
+                    multiSortKey={this.state.multiSortKey}
+                    onGridReady={this.onGridReady}
+                />
             </div>
+
         );
     }
 }
-
-// function irishAthletes() {
-//     return [
-//       "John Joe Nevin",
-//       "Katie Taylor",
-//       "Paddy Barnes",
-//       "Kenny Egan",
-//       "Darren Sutherland",
-//       "Margaret Thatcher",
-//       "Tony Blair",
-//       "Ronald Regan",
-//       "Barack Obama"
-//     ];
-// }
 
 export default App;
