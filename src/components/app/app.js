@@ -13,9 +13,9 @@ class App extends Component {
         this.state = {
             columnDefs: [
                 {
-                    headerName: "Make",
-                    field: "make",
-                    filter: "agSetColumnFilter",
+                    headerName: "id",
+                    field: "id",
+                    // filter: "agSetColumnFilter",
                     // filterParams: {
                     // cellHeight: 20,
                     // // values: irishAthletes(),
@@ -23,10 +23,22 @@ class App extends Component {
                     // }
                 }, 
                 {
-                    headerName: "Model", field: "model"
+                    headerName: "В продаже", field: "active"
                 }, 
                 {
-                    headerName: "Price", field: "price"
+                    headerName: "Скидка", field: "use_discounts"
+                },
+                {
+                    headerName: "Наименование", field: "name"
+                },
+                {
+                    headerName: "Категория", field: "category"
+                },
+                {
+                    headerName: "Ед. измерения", field: "measure"
+                },
+                {
+                    headerName: "Цех", field: "work_space"
                 }
             ],
 
@@ -38,34 +50,104 @@ class App extends Component {
                 filter: true
               },
 
-            rowData: [
-                {
-                make: "Toyota", model: "Celica", price: 35000
-                }, 
-                {
-                make: "Ford", model: "Mondeo", price: 32000
-                },
-                {
-                make: "Porsche", model: "Boxter", price: 72000
-                }
-            ]
-            // rowData: null
+            // rowData: [
+            //     {
+            //     make: "Toyota", model: "Celica", price: 35000
+            //     }, 
+            //     {
+            //     make: "Ford", model: "Mondeo", price: 32000
+            //     },
+            //     {
+            //     make: "Porsche", model: "Boxter", price: 72000
+            //     }
+            // ]
+            rowData: null
         }
     }
+
+    // componentDidMount() {
+    //     console.log('component did mount');
+
+    //     console.log('get products');
+        
+        // fetch('http://localhost:3000/products/')
+        // .then(response => response.json())
+        // .then(json => {
+        //     console.log(json);
+
+        // })
+        // .catch(error => console.log('error description: ', error));
+
+    //     console.log('get categories');
+        
+    //     fetch('http://localhost:3000/categories/')
+    //     .then(response => response.json())
+    //     .then(json => console.log(json))
+    //     .catch(error => console.log('error description: ', error));
+
+
+        // console.log('get workshops');
+        
+        // fetch('http://localhost:3000/workshops/')
+        // .then(response => response.json())
+        // .then(json => console.log(json))
+        // .catch(error => console.log('error description: ', error));
+
+    // }
+
+
+    onGridReady = params => {
+        this.gridApi = params.api;
+        this.gridColumnApi = params.columnApi;
+    
+        // const httpRequest = new XMLHttpRequest();
+        const updateData = data => {
+          this.setState({ rowData: data });
+        };
+    
+        // httpRequest.open(
+        //   "GET",
+        //   "https://raw.githubusercontent.com/ag-grid/ag-grid/master/packages/ag-grid-docs/src/olympicWinners.json"
+        // );
+        // httpRequest.send();
+        // httpRequest.onreadystatechange = () => {
+        //   if (httpRequest.readyState === 4 && httpRequest.status === 200) {
+        //     updateData(JSON.parse(httpRequest.responseText));
+        //   }
+        // };
+
+        // fetch('http://localhost:3000/products/')
+        // .then(response => response.json())
+        // .then(json => {
+        //     console.log(json);
+        //     updateData(json.data);
+        // })
+        // .catch(error => console.log('error description: ', error));
+
+
+        fetch('http://localhost:3000/all/')
+        .then(response => response.json())
+        .then(data => {
+            // console.log(data);
+            updateData(data);
+        })
+        .catch(error => console.log('error description: ', error));
+
+    };
 
     render() {
         return (
             <div
                 className="ag-theme-balham"
                 style={{
-                    height: '500px',
-                    width: '600px'
-                }}
-            >
+                    height: '1500px',
+                    width: '1500px'
+                }}>
                 <AgGridReact
                     columnDefs={this.state.columnDefs}
                     defaultColDef={this.state.defaultColDef}
-                    rowData={this.state.rowData}>
+                    rowData={this.state.rowData}
+                    onGridReady={this.onGridReady}>
                 </AgGridReact>
             </div>
         );
